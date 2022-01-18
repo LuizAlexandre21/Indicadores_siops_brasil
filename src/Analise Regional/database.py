@@ -94,10 +94,9 @@ class Despesas_saude_subfuncao_estadual(BaseModel):
 class Populacao(BaseModel):
     Estado = TextField()
     Ano = IntegerField()
-    População = IntegerField()
-    IDH = IntegerField()
-    Porte = IntegerField()
+    População = TextField()
+    IDH = TextField()
+    Porte = TextField()
     class Meta:
         primary_key = False
         table_name = "pop_csv"
-
