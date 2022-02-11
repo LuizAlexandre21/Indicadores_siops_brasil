@@ -88,39 +88,39 @@ for dados in list(dados_adicionais.dicts()):
     if dados.get("Estado") in Norte:
         Adicionais_Norte_Nordeste.append(dados)
 
+
 # 1 Receita Total por Estado da Região Norte para apuração da aplicação em ações e serviços públicos de saúde, no agregado de 2013 a 2019, em milhões de reais
 # Receita Estadual Total
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-        #if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
-            campo1 = dados['Receitas_realizadas_Bimestre']
-        elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado:
-            campo2 = dados['Receitas_realizadas_Bimestre']
-            tabela[str(dados['Ano'])].append((campo1+campo2)/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                denominador = dados['Receitas_realizadas_Bimestre']
+                tabela[str(dados['Ano'])].append((numerador+denominador)/1000000)
     tabela['Estado'].append(estado)
 
 # Exportando os dados
 list_csv(deflação(tabela),'Receita Total - Norte')
-
 
 # 2 Receita Total por Estado da Região Nordeste para apuração da aplicação em ações e serviços públicos de saúde, no agregado de 2013 a 2019, em milhões de reais
 # Receita Estadual Total
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-       #if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
-            campo1 = dados['Receitas_realizadas_Bimestre']
-        elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado:
-            campo2 = dados['Receitas_realizadas_Bimestre']
-            tabela[str(dados['Ano'])].append((campo1+campo2)/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                denominador = dados['Receitas_realizadas_Bimestre']
+                tabela[str(dados['Ano'])].append((denominador+numerador)/1000000)
     tabela['Estado'].append(estado)
 
-# Exportando os dados
+# Exportando dados 
 list_csv(deflação(tabela),'Receita Total - Nordeste')
 
 # 3 Receita Total por IDH nos Estado da Região Norte e Nordeste para apuração da aplicação em ações e serviços públicos de saúde, no agregado de 2013 a 2019, em milhões de reais
@@ -130,14 +130,15 @@ for IDH in ['Médio','Alto','Muito Alto']:
     for anos in range(2013,2020):
         numerador = []
         for dados in Apuração_Norte_Nordeste:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['IDH']==IDH:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['IDH']==IDH and dados['Ano']==anos :
                 campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['IDH']==IDH and dados['Ano']==anos:
                 campo2 = dados['Receitas_realizadas_Bimestre']
                 numerador.append((campo1+campo2)/1000000)
         tabela[str(anos)].append(sum(numerador))
     tabela['IDH'].append(IDH)
 list_csv(deflação(tabela),'Receita Total - IDH')
+
 
 # 4 Receita Total por Porte nos Estado da Região Norte e Nordeste para apuração da aplicação em ações e serviços públicos de saúde, no agregado de 2013 a 2019, em milhões de reais
 tabela={'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -146,31 +147,30 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
     for anos in range(2013,2020):
         numerador = []
         for dados in Apuração_Norte_Nordeste:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Porte'] == Porte and dados['Ano']==anos :
                 campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado']==estado:
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Porte']==Porte and dados['Ano']==anos:
                 campo2 = dados['Receitas_realizadas_Bimestre']
                 numerador.append((campo1+campo2)/1000000)
         tabela[str(anos)].append(sum(numerador))
     tabela['Porte'].append(Porte)
 list_csv(deflação(tabela),'Receita Total - Porte')
 
-
 # 5 Receita Total por Estado da Região Norte para apuração da aplicação em ações e serviços públicos de saúde, no agregado de 2013 a 2019, per capita.
 # Receita Estadual Total
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
-                campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado']==estado:
-                campo2 = dados['Receitas_realizadas_Bimestre']
-                campo3 = dados['População']
-                tabela[str(anos)].append(round((campo1+campo2)/campo3,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado']==estado and dados['Ano']==anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    campo3 = int(dados['População'])
+                    tabela[str(anos)].append(round(((campo1+campo2)/campo3),2))
     tabela['Estado'].append(estado)
-
 
 # Exportando os dados
 list_csv(tabela,'Receita Total per capita - Norte')
@@ -180,13 +180,13 @@ list_csv(tabela,'Receita Total per capita - Norte')
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
                 campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado']==estado:
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado']==estado and dados['Ano']==anos:
                 campo2 = dados['Receitas_realizadas_Bimestre']
-                campo3 = dados['População']
+                campo3 = int(dados['População'])
                 tabela[str(anos)].append(round((campo1+campo2)/campo3,2))
     tabela['Estado'].append(estado)
 
@@ -199,12 +199,11 @@ tabela={'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'20
 for IDH in ['Médio','Alto','Muito Alto']:
     for anos in range(2013,2020):
         numerador = []
-        print(numerador)
         denominador =[]
         for dados in Apuração_Norte_Nordeste:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['IDH'] == IDH and dados['Ano']==anos:
                 campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS' and dados['Estado']:
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  and dados['IDH'] == IDH and dados['Ano']==anos:
                 campo2 = dados['Receitas_realizadas_Bimestre']
                 numerador.append(campo1+campo2)
                 denominador.append(int(dados['População']))
@@ -213,8 +212,9 @@ for IDH in ['Médio','Alto','Muito Alto']:
         except Exception as e:
             print(e)
     tabela['IDH'].append(IDH)
-list_csv(tabela,'Receita Total per capita - IDH')
 
+# Exportando a tabela
+list_csv(tabela,'Receita Total per capita - IDH')
 
 # 8 Receita Total por Porte por estados da Região Nordeste e Norte para apuração da aplicação em ações e serviços públicos de saúde, no agregado de 2013 a 2019, per capita.
 tabela={'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -224,9 +224,9 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
         numerador = []
         denominador =[]
         for dados in Apuração_Norte_Nordeste:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Porte'] == Porte and dados['Ano'] == anos :
                 campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS' and dados['Estado']:
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Porte'] == Porte and dados['Ano'] == anos:
                 campo2 = dados['Receitas_realizadas_Bimestre']
                 numerador.append(campo1+campo2)
                 denominador.append(int(dados['População']))
@@ -235,6 +235,8 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
         except Exception as e:
             tabela[str(anos)].append(0)
     tabela['Porte'].append(Porte)
+
+# Exportando a tabela
 list_csv(tabela,'Receita Total per capita - Porte')
 
 # 9 Receita líquida de impostos das Regiões Norte/Nordeste, 2013 a 2019, em milhões de reais
@@ -244,7 +246,7 @@ tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],
 for estado in ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
     for dados in Apuração_Norte:
         if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Ano']==anos :
                 numerador = dados['Receitas_realizadas_Bimestre']
                 tabela[str(dados['Ano'])].append(numerador/1000000)
     tabela['Estado'].append(estado)
@@ -257,11 +259,12 @@ list_csv(deflação(tabela),'Receita líquida de impostos- Norte')
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-                tabela[str(dados['Ano'])].append(numerador/1000000)
+    for anos in range(2013,2020):
+          for dados in Apuração_Nordeste:
+                if dados['Estado'] == estado:
+                    if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Ano']==anos :
+                        numerador = dados['Receitas_realizadas_Bimestre']
+                        tabela[str(dados['Ano'])].append(numerador/1000000)
     tabela['Estado'].append(estado)
 
 # Exportando os dados
@@ -279,6 +282,7 @@ for IDH in ['Médio','Alto','Muito Alto']:
         tabela[str(anos)].append(sum(numerador)/1000000)
     tabela['IDH'].append(IDH)
 
+# Exportando os dados
 list_csv(deflação(tabela),'Receita líquida de impostos - IDH')
 
 # 12 Receita líquida de impostos por Porte das Regiões Norte/Nordeste, 2013 a 2019, em milhões de reais
@@ -293,6 +297,7 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
         tabela[str(anos)].append(sum(numerador)/1000000)
     tabela['Porte'].append(Porte)
 
+# Exportando os dadso
 list_csv(deflação(tabela),'Receita líquida de impostos - Porte')
 
 # 13 Receita líquida estadual de impostos dos estados da Região Norte, no agregado de 2013 a 2019, per capita
@@ -300,12 +305,13 @@ list_csv(deflação(tabela),'Receita líquida de impostos - Porte')
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-                denominador = int(dados['População'])
-                tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)'and dados['Ano']==anos:
+                    numerador = dados['Receitas_realizadas_Bimestre']
+                    denominador = int(dados['População'])
+                    tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
     tabela['Estado'].append(estado)
 
 # Exportando os dados
@@ -316,12 +322,13 @@ list_csv(tabela,'Receita liquida per capita - Norte')
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-                denominador = int(dados['População'])
-                tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Ano']==anos:
+                    numerador = dados['Receitas_realizadas_Bimestre']
+                    denominador = int(dados['População'])
+                    tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
     tabela['Estado'].append(estado)
 
 # Exportando os dados
@@ -344,7 +351,6 @@ for IDH in ['Médio','Alto','Muito Alto']:
             tabela[str(anos)].append(0)
     tabela['IDH'].append(IDH)
 
-# Exportando os dados
 list_csv(tabela,'Receita liquida per capita - IDH')
 
 # 16 Receita líquida estadual de impostos por Porte dos estados da Região Norte e Nordeste, no agregado de 2013 a 2019, per capita
@@ -371,11 +377,12 @@ list_csv(tabela,'Receita liquida per capita - Porte')
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-                tabela[str(dados['Ano'])].append(numerador/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano']==anos:
+                    numerador = dados['Receitas_realizadas_Bimestre']
+                    tabela[str(dados['Ano'])].append(numerador/1000000)
     tabela['Estado'].append(estado)
 
 # Exportando os dados
@@ -385,11 +392,12 @@ list_csv(tabela,'Receita de transferência constitucional e legais - Norte')
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-                tabela[str(dados['Ano'])].append(numerador/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano']==anos:
+                    numerador = dados['Receitas_realizadas_Bimestre']
+                    tabela[str(dados['Ano'])].append(numerador/1000000)
     tabela['Estado'].append(estado)
 
 # Exportando os dados
@@ -407,6 +415,7 @@ for IDH in ['Médio','Alto','Muito Alto']:
         tabela[str(anos)].append(sum(numerador)/1000000)
     tabela['IDH'].append(IDH)
 
+# Exportando os dados
 list_csv(tabela,'Receita de transferência constitucional e legais - IDH')
 
 # 20 - Receita de Transferências Constitucionais e Legais da União por IDH dos Estados da Região Nordeste, 2013 a 2019, em milhões de reais.
@@ -421,8 +430,8 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
         tabela[str(anos)].append(sum(numerador)/1000000)
     tabela['Porte'].append(Porte)
 
+# Exportando os dados 
 list_csv(deflação(tabela),'Receita de transferência constitucional e legais - Porte')
-
 
 # 21 Receita de Transferências Constitucionais e Legais da União para os Estados da Região Norte, 2013 a 2019, per capita
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -443,12 +452,13 @@ list_csv(tabela,'Receita de transferência constitucional e legais per capita - 
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                    numerador = dados['Receitas_realizadas_Bimestre']
-                    denominador = int(dados['População'])
-                    tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano']==anos:
+                        numerador = dados['Receitas_realizadas_Bimestre']
+                        denominador = int(dados['População'])
+                        tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
     tabela['Estado'].append(estado)
 
 # Exportando os dados
@@ -471,6 +481,7 @@ for IDH in ['Médio','Alto','Muito Alto']:
             tabela[str(anos)].append(0)
     tabela['IDH'].append(IDH)
 
+# Exportando os dados
 list_csv(tabela,'Receita de transferência constitucional e legais - IDH')
 
 # 24 - Receita de Transferências Constitucionais e Legais da União por Porte dos Estados da Região Nordeste, 2013 a 2019, em milhões de reais.
@@ -489,21 +500,23 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
             tabela[str(anos)].append(0)
     tabela['Porte'].append(Porte)
 
+# Exportando os dados
 list_csv(tabela,'Receita de transferência constitucional e legais - Porte')
 
 # 25 Percentual médio da receita líquida de impostos na receita total dos estados da Região Norte, no agregado de 2013 a 2019
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
-                campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS' and dados['Estado']:
-                campo2 = dados['Receitas_realizadas_Bimestre']
-                numerador.append(campo1)
-                denominador.append(campo1 + campo2)
-                tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Ano'] == anos:
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador = campo1
+                    denominador = campo1 + campo2
+                    tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
     tabela['Estado'].append(estado)
 
 # Exportando os dados
@@ -513,15 +526,16 @@ list_csv(tabela,'Indicador Capacidade - Norte')
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
-                campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS' and dados['Estado']:
-                campo2 = dados['Receitas_realizadas_Bimestre']
-                numerador.append(campo1)
-                denominador.append(campo1 + campo2)
-                tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Ano'] == anos:
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador = campo1
+                    denominador = campo1 + campo2
+                    tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
     tabela['Estado'].append(estado)
 
 # Exportando os dados
@@ -535,9 +549,9 @@ for IDH in ['Médio','Alto','Muito Alto']:
         numerador=[]
         denominador=[]
         for dados in Apuração_Norte_Nordeste:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Ano'] == anos and dados['IDH']==IDH:
                 campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS' and dados['Estado']:
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and  dados['Ano'] == anos and dados['IDH']==IDH:
                 campo2 = dados['Receitas_realizadas_Bimestre']
                 numerador.append(campo1)
                 denominador.append(campo1 + campo2)
@@ -546,6 +560,8 @@ for IDH in ['Médio','Alto','Muito Alto']:
         except:
             tabela[str(anos)].append(0)
     tabela['IDH'].append(IDH)
+
+# Exportando os dados
 list_csv(tabela,'Indicador Capacidade - IDH')
 
 # 28 Percentual médio da receita líquida de impostos na receita total dos estados da Região Nordeste, no agregado de 2013 a 2019
@@ -556,9 +572,9 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
         numerador=[]
         denominador=[]
         for dados in Apuração_Norte_Nordeste:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Ano'] == anos and dados['Porte']==Porte:
                 campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS' and dados['Estado']:
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and  dados['Ano'] == anos and dados['Porte']==Porte:
                 campo2 = dados['Receitas_realizadas_Bimestre']
                 numerador.append(campo1)
                 denominador.append(campo1 + campo2)
@@ -568,6 +584,7 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
             tabela[str(anos)].append(0)
     tabela['Porte'].append(Porte)
 
+# Exportando os dados
 list_csv(tabela,'Indicador Capacidade - Porte')
 
 # 29 - Percentual Médio da receita de transferências na receita total dos estados da Região Norte, no agregado de 2013 a 2019
@@ -592,15 +609,18 @@ list_csv(tabela,'Indicador Dependencia - Norte')
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS':
-                campo2 = dados['Receitas_realizadas_Bimestre']
-                numerador.append(campo1)
-                denominador.append(campo1 + campo2)
-                tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+                if dados['campo'] =='RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Ano']==anos and dados['Estado'] == estado :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano']==anos and dados['Estado'] == estado :
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador = campo1
+                    denominador = campo1 + campo2
+                    tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
     tabela['Estado'].append(estado)
+
+# Exportando os dados
 list_csv(tabela,'Indicador Dependencia - Nordeste')
 
 # 31 - Percentual Médio da receita de transferências na receita total dos estados da Região Norte e Nortdeste - IDH, no agregado de 2013 a 2019 
@@ -611,9 +631,9 @@ for IDH in ['Médio','Alto','Muito Alto']:
         numerador=[]
         denominador=[]
         for dados in Apuração_Norte_Nordeste:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
+            if dados['campo'] =='RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Ano']==anos and dados['IDH'] == IDH :
                 campo1 = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS':
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano']==anos and dados['IDH'] == IDH :
                 campo2 = dados['Receitas_realizadas_Bimestre']
                 numerador.append(campo1)
                 denominador.append(campo1 + campo2)
@@ -622,6 +642,8 @@ for IDH in ['Médio','Alto','Muito Alto']:
         except:
             tabela[str(anos)].append(0)
     tabela['IDH'].append(IDH)
+
+# Exportando os dados
 list_csv(tabela,'Indicador Dependencia - IDH')
 
 # 32 - Percentual Médio da receita de transferências na receita total dos estados da Região Norte e Nortdeste - Porte, no agregado de 2013 a 2019 
@@ -641,20 +663,23 @@ for Porte in ['1000000','5000000','10000000','15000000','20000000']:
         except:
             tabela[str(anos)].append(0)
     tabela['Porte'].append(Porte)
+
+# Exportando os dados
 list_csv(tabela,'Indicador Dependencia - Porte')
 
 # 33 - Percentual Médio da receita de transferências na receita total dos estados da Região Norte, no agregado de 2013 a 2019 
 tabela={'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano']==anos and dados['Porte']==Porte:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Ano']==anos and dados['Porte']==Porte:
-                denominador.append(int(dados['Receitas_realizadas_Bimestre']))
-                tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
-    tabela['Estado'].append(estado)
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Ano']==anos and dados['Estado']==estado:
+                    numerador = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Ano']==anos and dados['Estado']==estado:
+                    denominador =int(dados['Receitas_realizadas_Bimestre'])
+                    tabela[str(dados['Ano'])].append(round(numerador/denominador,2))
+        tabela['Estado'].append(estado)
 
 # Exportando os dados
 list_csv(tabela,'Indicador Dependencia - Nordeste')
