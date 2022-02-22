@@ -1,7 +1,6 @@
 # Pacotes 
 from database import *
 import  numpy as np
-import plotly.express as px
 import logging
 import os
 import sys
@@ -53,12 +52,16 @@ except Exception as e:
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for idh in  ['Muito Alto','Alto','Médio']:
-    numerador = []
     for anos in range(2013,2020):
+        numerador =[]
+        denominador =[]
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['IDH'] == idh and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre']/1000000)
-        Tabela[str(anos)].append(sum(numerador))
+            if  dados['IDH'] == idh and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  or dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    denominador.append(dados['Receitas_realizadas_Bimestre'])
+        Tabela[str(anos)].append((sum(numerador)+sum(denominador))/1000000)
     Tabela['IDH'].append(idh)
 
 list_csv(Tabela,"Receita Total por IDH")
@@ -66,16 +69,21 @@ list_csv(Tabela,"Receita Total por IDH")
 # 2. Receita Total por IDH - Per Capita 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in ['Muito Alto','Alto','Médio']:
-    numerador = []
-    denominador =[]
+for idh in  ['Muito Alto','Alto','Médio']:
     for anos in range(2013,2020):
+        numerador =[]
+        denominador =[]
+        pop = []
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['IDH'] == idh and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-                denominador.append(int(dados['População']))
-        Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+            if  dados['IDH'] == idh and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                    pop.append(int(dados['População']))
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  or dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    denominador.append(dados['Receitas_realizadas_Bimestre'])
+        Tabela[str(anos)].append(round((sum(numerador)+sum(denominador))/sum(pop),2))
     Tabela['IDH'].append(idh)
+
 
 list_csv(Tabela,"Receita Total per capita por IDH")
 
@@ -86,9 +94,10 @@ for idh in ['Muito Alto','Alto','Médio']:
     numerador = []
     for anos in range(2013,2020):
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['IDH'] == idh and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre']/1000000)
-        Tabela[str(anos)].append(sum(numerador))
+            if dados['IDH'] == idh and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' :
+                    numerador.append(dados['Receitas_realizadas_Bimestre']/1000000)
+        Tabela[str(anos)].append(round(sum(numerador),2))
     Tabela['IDH'].append(idh)
 
 list_csv(Tabela,"Receita Liquida por IDH")
@@ -101,13 +110,15 @@ for idh in ['Muito Alto','Alto','Médio']:
     denominador =[]
     for anos in range(2013,2020):
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['IDH'] == idh and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-                denominador.append(int(dados['População']))
+            if dados['IDH'] == idh and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                    denominador.append(int(dados['População']))
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['IDH'].append(idh)
 
 list_csv(Tabela,"Receita Liquida per capita por IDH")
+
 # 5.Receita de Transferências Constitucionais e Legais da União 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
@@ -115,23 +126,27 @@ for idh in  ['Muito Alto','Alto','Médio']:
     numerador = []
     for anos in range(2013,2020):
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['IDH'] == idh and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre']/1000000)
+            if dados['IDH'] == idh and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    numerador.append(dados['Receitas_realizadas_Bimestre']/1000000)
         Tabela[str(anos)].append(sum(numerador))
     Tabela['IDH'].append(idh)
 
 list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União por IDH")
+
 # 6. Receita Total por IDH - Per Capita 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for idh in ['Muito Alto','Alto','Médio']:
-    numerador = []
-    denominador =[]
     for anos in range(2013,2020):
+        numerador = []
+        denominador =[]
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['IDH'] == idh and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-                denominador.append(int(dados['População']))
+            if dados['IDH'] == idh and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                    denominador.append(int(dados['População']))
+
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['IDH'].append(idh)
 
@@ -141,15 +156,21 @@ list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União p
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for idh in ['Muito Alto','Alto','Médio']:
-    numerador = []
-    denominador =[]
     for anos in range(2013,2020):
+        numerador = []
+        denominador =[]
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['IDH'] == idh and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['IDH'] == idh and dados['Ano']==anos:
-                denominador.append(dados['Receitas_realizadas_Bimestre'])
-    Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+            if dados['IDH'] == idh and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo']=='RECEITA DE IMPOSTOS LÍQUIDA': 
+                    campo1=dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo1)
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    campo2=dados['Receitas_realizadas_Bimestre']
+                    denominador.append(campo1+campo2)
+        try:
+            Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+        except Exception as e:
+            print(e)
     Tabela['IDH'].append(idh)
 
 list_csv(Tabela,"Indicador de Capacidade por IDH")
@@ -158,15 +179,18 @@ list_csv(Tabela,"Indicador de Capacidade por IDH")
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for idh in ['Muito Alto','Alto','Médio']:
-    numerador = []
-    denominador =[]
     for anos in range(2013,2020):
+        numerador = []
+        denominador =[]
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['IDH'] == idh and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['IDH'] == idh and dados['Ano']==anos:
-                denominador.append(dados['Receitas_realizadas_Bimestre'])
-    Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+            if dados['IDH'] == idh and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo']=='RECEITA DE IMPOSTOS LÍQUIDA': 
+                    campo1=dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    campo2=dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo2)
+                    denominador.append(campo1+campo2)
+        Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['IDH'].append(idh)
 
 list_csv(Tabela,"Indicador de Dependencia por IDH")
@@ -175,15 +199,18 @@ list_csv(Tabela,"Indicador de Dependencia por IDH")
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for idh in ['Muito Alto','Alto','Médio']:
-    numerador = []
-    denominador =[]
     for anos in range(2013,2020):
+        numerador = []
+        denominador =[]
         for dados in list(dados_adicionais.dicts()):
             if dados['campo'] == 'Provenientes da União' and dados['IDH'] == idh and dados['Ano']==anos:
                 numerador.append(dados['Receitas_realizadas_Bimestre'])
             elif dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE' and dados['IDH'] == idh and dados['Ano']==anos:
                 denominador.append(dados['Receitas_realizadas_Bimestre'])
-    Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+        try:
+            Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+        except: 
+            Tabela[str(anos)].append(0.0000001)
     Tabela['IDH'].append(idh)
 
 list_csv(Tabela,"Indicador de Dependencia Sus por IDH")

@@ -1,7 +1,7 @@
 # Pacotes 
 from database import *
 import  numpy as np
-import plotly.express as px
+#import plotly.express as px
 import logging
 import os
 import sys
@@ -18,7 +18,7 @@ def deflação(serie):
         a.append(IPCA[str(i)]/100)
         inflação[str(i)] = (1-sum(a))
     for ano in serie.keys():
-        if ano not in ['Estado','IDH','Porte','Região']:
+        if ano not in ['Estado','IDH','Estado','Região']:
             lista = []  
             for series in serie[ano]:
                 lista.append(series*inflação[ano])
@@ -43,10 +43,10 @@ def list_csv(dic,to):
         
 # Importando os dados 
 try:
-   dados_apuração = (Populacao.select(Populacao.Estado,Populacao.Ano,Populacao.População,Populacao.IDH,Populacao.Porte,Receitas_apuracao_sps_estadual.campo,Receitas_apuracao_sps_estadual.Receitas_realizadas_Bimestre).distinct().join(Receitas_apuracao_sps_estadual, on=((Populacao.Estado == Receitas_apuracao_sps_estadual.estado) &(Populacao.Ano == Receitas_apuracao_sps_estadual.ano))))
-   dados_adicionais = (Populacao.select(Populacao.Estado,Populacao.Ano,Populacao.População,Populacao.IDH,Populacao.Porte,Receitas_adicionais_financiamento_estadual.campo,Receitas_adicionais_financiamento_estadual.Receitas_realizadas_Bimestre).distinct().join(Receitas_adicionais_financiamento_estadual, on=((Populacao.Estado == Receitas_adicionais_financiamento_estadual.estado) &(Populacao.Ano == Receitas_adicionais_financiamento_estadual.ano))))
+   dados_apuração = (Populacao.select(Populacao.Estado,Populacao.Ano,Populacao.População,Populacao.IDH,Populacao.Estado,Receitas_apuracao_sps_estadual.campo,Receitas_apuracao_sps_estadual.Receitas_realizadas_Bimestre).distinct().join(Receitas_apuracao_sps_estadual, on=((Populacao.Estado == Receitas_apuracao_sps_estadual.estado) &(Populacao.Ano == Receitas_apuracao_sps_estadual.ano))))
+   dados_adicionais = (Populacao.select(Populacao.Estado,Populacao.Ano,Populacao.População,Populacao.IDH,Populacao.Estado,Receitas_adicionais_financiamento_estadual.campo,Receitas_adicionais_financiamento_estadual.Receitas_realizadas_Bimestre).distinct().join(Receitas_adicionais_financiamento_estadual, on=((Populacao.Estado == Receitas_adicionais_financiamento_estadual.estado) &(Populacao.Ano == Receitas_adicionais_financiamento_estadual.ano))))
 except Exception as e:
-   print(e)
+    print(e)
 
 # Segregando os dados por regiões 
 # Nordeste 
@@ -119,9 +119,13 @@ for dados in list(dados_adicionais.dicts()):
 Tabela_Norte = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-       if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            Tabela_Norte[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                denominador = dados['Receitas_realizadas_Bimestre']
+        Tabela_Norte[str(anos)].append((numerador+denominador)/1000000)
     Tabela_Norte['Estado'].append(estado)
 
 list_csv(Tabela_Norte,"Receita Total por Região - Norte")
@@ -130,9 +134,13 @@ list_csv(Tabela_Norte,"Receita Total por Região - Norte")
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-       if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            Tabela_Nordeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                denominador = dados['Receitas_realizadas_Bimestre']
+        Tabela_Nordeste[str(anos)].append((numerador+denominador)/1000000)
     Tabela_Nordeste['Estado'].append(estado)
 
 list_csv(Tabela_Nordeste,"Receita Total por Região - Nordeste")
@@ -141,9 +149,13 @@ list_csv(Tabela_Nordeste,"Receita Total por Região - Nordeste")
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Apuração_Sudeste:
-        if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Sudeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                denominador = dados['Receitas_realizadas_Bimestre']
+        Tabela_Sudeste[str(anos)].append((numerador+denominador)/1000000)
     Tabela_Sudeste['Estado'].append(estado)
 
 list_csv(Tabela_Sudeste,"Receita Total por Região - Sudeste")
@@ -151,16 +163,26 @@ list_csv(Tabela_Sudeste,"Receita Total por Região - Sudeste")
 # 1.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-    for dados in Apuração_Centro_Oeste:
-        if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
-        elif dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' and dados['Estado'] == estado:
-            coluna_1 = dados['Receitas_realizadas_Bimestre'] 
-        elif dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS' and dados['Estado'] == estado:
-            coluna_2 = dados['Receitas_realizadas_Bimestre'] 
-            Tabela_Centro[str(dados['Ano'])].append((coluna_1 + coluna_2)/1000000)
-    Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
+for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']: 
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                denominador = dados['Receitas_realizadas_Bimestre']
+        Tabela_Centro[str(anos)].append((numerador+denominador)/1000000)
+    Tabela_Centro['Estado'].append(estado) 
+
+
+for estado in ['Distrito Federal']:
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' and dados['Estado'] == estado:
+                coluna_1 = dados['Receitas_realizadas_Bimestre'] 
+            elif dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS' and dados['Estado'] == estado:
+                coluna_2 = dados['Receitas_realizadas_Bimestre'] 
+        Tabela_Centro[str(anos)].append((coluna_1 + coluna_2)/1000000)
+    Tabela_Centro['Estado'].append(estado) 
 
 list_csv(Tabela_Centro,"Receita Total por Região - Centro Oeste")
 
@@ -169,10 +191,14 @@ list_csv(Tabela_Centro,"Receita Total por Região - Centro Oeste")
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-    for dados in Apuração_Sul:
-        if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            Tabela_Sul[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
-    Tabela_Sul['Estado'].append(estado)
+    for anos in range(2013,2020):
+        for dados in Apuração_Sul:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                denominador = dados['Receitas_realizadas_Bimestre']
+        Tabela_Sul[str(anos)].append((numerador+denominador)/1000000)
+    Tabela_Sul['Estado'].append(estado) 
 
 list_csv(Tabela_Sul,"Receita Total por Região - Sul")
 
@@ -192,11 +218,14 @@ list_csv(Tabela_Brasil,"Receita Total por Região - Brasil")
 Tabela_Norte = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-       if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                campo3 = int(int(dados['População']))
+        Tabela_Norte[str(anos)].append(round((campo1 + campo2)/campo3,2))
     Tabela_Norte['Estado'].append(estado)
 
 list_csv(Tabela_Norte,"Receita Total por Região per capita - Norte")
@@ -205,11 +234,14 @@ list_csv(Tabela_Norte,"Receita Total por Região per capita - Norte")
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                campo3 = int(int(dados['População']))
+        Tabela_Nordeste[str(anos)].append(round((campo1 + campo2)/campo3,2))
     Tabela_Nordeste['Estado'].append(estado)
 
 list_csv(Tabela_Nordeste,"Receita Total por Região per capita - Nordeste")
@@ -218,11 +250,14 @@ list_csv(Tabela_Nordeste,"Receita Total por Região per capita - Nordeste")
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Apuração_Sudeste:
-        if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Sudeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                campo3 = int(int(dados['População']))
+        Tabela_Sudeste[str(anos)].append(round((campo1 + campo2)/campo3,2))
     Tabela_Sudeste['Estado'].append(estado)
 
 list_csv(Tabela_Sudeste,"Receita Total por Região per capita - Sudeste")
@@ -230,20 +265,27 @@ list_csv(Tabela_Sudeste,"Receita Total por Região per capita - Sudeste")
 # 2.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-    print(estado)
-    for dados in Apuração_Centro_Oeste:
-        if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
-        elif dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' and dados['Estado'] == estado:
-            coluna_1 = dados['Receitas_realizadas_Bimestre'] 
-        elif dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS' and dados['Estado'] == estado:
-            coluna_2 = dados['Receitas_realizadas_Bimestre'] 
-            numerador = coluna_1 + coluna_2 
-            denominador = int(dados['População'])
-            Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
+for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']: 
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                campo3 = int(int(dados['População']))
+        Tabela_Centro[str(anos)].append(round((campo1 + campo2)/campo3,2))
+    Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
+
+for estado in ['Distrito Federal']: 
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' and dados['Estado'] == estado and dados['Ano']==anos:
+                coluna_1 = dados['Receitas_realizadas_Bimestre'] 
+                denominador = int(int(dados['População']))
+            if dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS' and dados['Estado'] == estado and dados['Ano']==anos:
+                coluna_2 = dados['Receitas_realizadas_Bimestre'] 
+                numerador = coluna_1 + coluna_2 
+        Tabela_Centro[str(anos)].append(round((numerador)/denominador,2))
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
         
 list_csv(Tabela_Centro,"Receita Total por Região per capita - Centro Oeste")
@@ -252,16 +294,19 @@ list_csv(Tabela_Centro,"Receita Total por Região per capita - Centro Oeste")
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-    for dados in Apuração_Sul:
-        if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Sul[str(dados['Ano'])].append(round(numerador/denominador,2))
-    Tabela_Sul['Estado'].append(estado)
+    for anos in range(2013,2020):
+        for dados in Apuração_Sul:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                campo3 = int(int(dados['População']))
+        Tabela_Sul[str(anos)].append(round((campo1 + campo2)/campo3,2))
+    Tabela_Sul['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
 list_csv(Tabela_Sul,"Receita Total por Região per capita - Sul")
 
-# 1.6 Brasil 
+# 2.6 Brasil 
 Tabela_Brasil = {'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 for anos in range(2013,2020):
     Sudeste = {'Total':[],'População':[]}
@@ -271,25 +316,46 @@ for anos in range(2013,2020):
     Nordeste = {'Total':[],'População':[]}
     for dados in list(dados_apuração.dicts()):
         for estado in ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Norte['Total'].append(dados['Receitas_realizadas_Bimestre'])
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Norte['Total'].append(campo1+campo2)
                 Norte['População'].append(int(dados['População']))
         for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Nordeste['Total'].append(dados['Receitas_realizadas_Bimestre'])       
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Nordeste['Total'].append(campo1+campo2)
                 Nordeste['População'].append(int(dados['População']))
         for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Sul['Total'].append(dados['Receitas_realizadas_Bimestre'])     
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Sul['Total'].append(campo1+campo2)
                 Sul['População'].append(int(dados['População']))
-        for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']:
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' or dados['campo'] == 'COMPETÊNCIA TRIBUTARIA MUNICIPAL (I)':
-                if dados['Estado'] == estado and dados['Ano']==anos:
-                    Centro['Total'].append(dados['Receitas_realizadas_Bimestre'])     
-                    Centro['População'].append(int(dados['População']))
+        for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Centro['Total'].append(campo1+campo2)
+                Centro['População'].append(int(dados['População']))
+        for estado in ['Distrito Federal']:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' and dados['Estado'] == estado:
+                campo_1 = dados['Receitas_realizadas_Bimestre'] 
+            elif dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS' and dados['Estado'] == estado:
+                campo_2 = dados['Receitas_realizadas_Bimestre'] 
+                Centro['Total'].append(campo1+campo2)
+                Centro['População'].append(int(dados['População']))
         for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Sudeste['Total'].append(dados['Receitas_realizadas_Bimestre'])     
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Sudeste['Total'].append(campo1+campo2)
                 Sudeste['População'].append(int(dados['População']))
     Tabela_Brasil[str(anos)].append(sum(Sudeste['Total'])/sum(Sudeste['População']))
     Tabela_Brasil[str(anos)].append(sum(Sul['Total'])/sum(Sul['População']))
@@ -305,9 +371,10 @@ list_csv(Tabela_Brasil,"Receita Total por Região per capita - Brasil")
 Tabela_Norte = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-       if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado:
-            Tabela_Norte[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+           if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano']==anos:
+                Tabela_Norte[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Norte['Estado'].append(estado)
 
 list_csv(Tabela_Norte,"Receita Líquida - Norte")
@@ -316,9 +383,10 @@ list_csv(Tabela_Norte,"Receita Líquida - Norte")
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-       if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado:
-            Tabela_Nordeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+           if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano']==anos:
+                Tabela_Nordeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Nordeste['Estado'].append(estado)
 
 list_csv(Tabela_Nordeste,"Receita Líquida - Nordeste")
@@ -326,31 +394,35 @@ list_csv(Tabela_Nordeste,"Receita Líquida - Nordeste")
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Apuração_Sudeste:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado:
-            Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
-    Tabela_Sudeste['Estado'].append(estado)
+    for anos in range(2013,2020):
+        for dados in Apuração_Sudeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano']==anos:
+                Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+        Tabela_Sudeste['Estado'].append(estado)
 
 list_csv(Tabela_Sudeste,"Receita Líquida - Sudeste")
+
 # 3.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-    print(estado)
-    for dados in Apuração_Centro_Oeste:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' :
-            if dados['Estado'] == estado:
-                Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+for estado in ['Goiás', 'Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' :
+                if dados['Estado'] == estado and dados['Ano']==anos:
+                    Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
 list_csv(Tabela_Centro,"Receita Líquida - Centro Oeste")
+
 # 3.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-    for dados in Apuração_Sul:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado:
-            Tabela_Sul[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Sul:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano']==anos:
+                Tabela_Sul[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sul['Estado'].append(estado)
 
 list_csv(Tabela_Sul,"Receita Líquida - Sul")
@@ -370,11 +442,12 @@ list_csv(Tabela_Brasil,"Receita Líquida - Brasil")
 Tabela_Norte = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-       if dados['campo'] =='RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+           if dados['campo'] =='RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+                denominador = int(dados['População'])
+                Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Norte['Estado'].append(estado)
 
 list_csv(Tabela_Norte,"Receita Líquida per capita - Norte")
@@ -383,11 +456,12 @@ list_csv(Tabela_Norte,"Receita Líquida per capita - Norte")
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+                denominador = int(dados['População'])
+                Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Nordeste['Estado'].append(estado)
 
 list_csv(Tabela_Nordeste,"Receita Líquida per capita - Nordeste")
@@ -396,11 +470,12 @@ list_csv(Tabela_Nordeste,"Receita Líquida per capita - Nordeste")
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Apuração_Sudeste:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Sudeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano']==anos: 
+                numerador = dados['Receitas_realizadas_Bimestre']
+                denominador = int(dados['População'])
+                Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sudeste['Estado'].append(estado)
 list_csv(Tabela_Sudeste,"Receita Líquida per capita - Sudeste")
 
@@ -408,13 +483,13 @@ list_csv(Tabela_Sudeste,"Receita Líquida per capita - Sudeste")
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-    print(estado)
-    for dados in Apuração_Centro_Oeste:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
-            if dados['Estado'] == estado:
-                numerador = dados['Receitas_realizadas_Bimestre']
-                denominador = int(dados['População'])
-                Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                if dados['Estado'] == estado and dados['Ano']==anos:
+                    numerador = dados['Receitas_realizadas_Bimestre']
+                    denominador = int(dados['População'])
+                    Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
 list_csv(Tabela_Centro,"Receita Líquida per capita - Centro Oeste")
@@ -423,10 +498,11 @@ list_csv(Tabela_Centro,"Receita Líquida per capita - Centro Oeste")
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-    for dados in Apuração_Sul:
-        if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
+    for anos in range(2013,2020):
+        for dados in Apuração_Sul:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+                denominador = int(dados['População'])
             Tabela_Sul[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sul['Estado'].append(estado)
 
@@ -476,9 +552,10 @@ list_csv(Tabela_Brasil,"Receita Líquida per capita - Brasil")
 Tabela_Norte = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-       if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado:
-            Tabela_Norte[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                Tabela_Norte[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Norte['Estado'].append(estado)
 
 list_csv(Tabela_Norte,"Receita de Transferências Constitucionais e Legais da União - Norte")
@@ -487,9 +564,10 @@ list_csv(Tabela_Norte,"Receita de Transferências Constitucionais e Legais da Un
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-       if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado:
-            Tabela_Nordeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                Tabela_Nordeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Nordeste['Estado'].append(estado)
 
 list_csv(Tabela_Nordeste,"Receita de Transferências Constitucionais e Legais da União - Nordeste")
@@ -498,9 +576,10 @@ list_csv(Tabela_Nordeste,"Receita de Transferências Constitucionais e Legais da
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Apuração_Sudeste:
-        if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado:
-            Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Sudeste:
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sudeste['Estado'].append(estado)
 
 list_csv(Tabela_Sudeste,"Receita de Transferências Constitucionais e Legais da União - Sudeste")
@@ -509,11 +588,11 @@ list_csv(Tabela_Sudeste,"Receita de Transferências Constitucionais e Legais da 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-
-    for dados in Apuração_Centro_Oeste:
-        if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo']=='COMPETÊNCIA TRIBUTARIA ESTADUAL (II)':
-            if dados['Estado'] == estado:
-                Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo']=='RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                if dados['Estado'] == estado and dados['Ano'] == anos:
+                    Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 list_csv(Tabela_Centro,"Receita de Transferências Constitucionais e Legais da União - Centro")
 
@@ -521,9 +600,10 @@ list_csv(Tabela_Centro,"Receita de Transferências Constitucionais e Legais da U
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-    for dados in Apuração_Sul:
-        if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado:
-            Tabela_Sul[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+    for anos in range(2013,2020):
+        for dados in Apuração_Sul:
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                Tabela_Sul[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sul['Estado'].append(estado)
 
 list_csv(Tabela_Sul,"Receita de Transferências Constitucionais e Legais da União - Sul")
@@ -545,11 +625,12 @@ list_csv(Tabela_Brasil,"Receita de Transferências Constitucionais e Legais da U
 Tabela_Norte = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-       if dados['campo'] =='RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+           if dados['campo'] =='RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+                denominador = int(dados['População'])
+                Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Norte['Estado'].append(estado)
 
 list_csv(Tabela_Norte,"Receita de Transferências Constitucionais e Legais da União per capita - Sul")
@@ -559,11 +640,12 @@ list_csv(Tabela_Norte,"Receita de Transferências Constitucionais e Legais da Un
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                numerador = dados['Receitas_realizadas_Bimestre']
+                denominador = int(dados['População'])
+                Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Nordeste['Estado'].append(estado)
 
 list_csv(Tabela_Nordeste,"Receita de Transferências Constitucionais e Legais da União per capita - Nordeste")
@@ -572,11 +654,12 @@ list_csv(Tabela_Nordeste,"Receita de Transferências Constitucionais e Legais da
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Apuração_Sudeste:
-        if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  and dados['Estado'] == estado:
-            numerador = dados['Receitas_realizadas_Bimestre']
-            denominador = int(dados['População'])
-            Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Sudeste:
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  and dados['Estado'] == estado:
+                numerador = dados['Receitas_realizadas_Bimestre']
+                denominador = int(dados['População'])
+                Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sudeste['Estado'].append(estado)
 
 list_csv(Tabela_Sudeste,"Receita de Transferências Constitucionais e Legais da União per capita - Sudeste")
@@ -585,13 +668,13 @@ list_csv(Tabela_Sudeste,"Receita de Transferências Constitucionais e Legais da 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-    print(estado)
-    for dados in Apuração_Centro_Oeste:
-        if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo']=='COMPETÊNCIA TRIBUTARIA ESTADUAL (II)':  
-            if dados['Estado'] == estado:
-                numerador = dados['Receitas_realizadas_Bimestre']
-                denominador = int(dados['População'])
-                Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo']=='RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':  
+                if dados['Estado'] == estado and dados['Ano'] == anos:
+                    numerador = dados['Receitas_realizadas_Bimestre']
+                    denominador = int(dados['População'])
+                    Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
 list_csv(Tabela_Centro,"Receita de Transferências Constitucionais e Legais da União per capita - Centro Oeste")
@@ -600,7 +683,8 @@ list_csv(Tabela_Centro,"Receita de Transferências Constitucionais e Legais da U
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-    for dados in Apuração_Sul:
+    for anos in range(2013,2020):
+       for dados in Apuração_Sul:
         if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  and dados['Estado'] == estado:
             numerador = dados['Receitas_realizadas_Bimestre']
             denominador = int(dados['População'])
@@ -631,7 +715,7 @@ for anos in range(2013,2020):
                 Sul['Total'].append(dados['Receitas_realizadas_Bimestre'])     
                 Sul['População'].append(int(dados['População']))
         for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo']=='COMPETÊNCIA TRIBUTARIA ESTADUAL (II)':
+            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo']=='RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
                 if dados['Estado'] == estado and dados['Ano']==anos:
                     Centro['Total'].append(dados['Receitas_realizadas_Bimestre'])     
                     Centro['População'].append(int(dados['População']))
@@ -653,13 +737,15 @@ list_csv(Tabela_Brasil,"Receita de Transferências Constitucionais e Legais da U
 Tabela_Norte = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+           if dados['Estado'] == estado and dados['Ano']:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador = campo1
+                    Tabela_Norte[str(dados['Ano'])].append(round(numerador/(campo1+campo2),2))
     Tabela_Norte['Estado'].append(estado)
 
 list_csv(Tabela_Norte,"Indicador de Capacidade - Norte")
@@ -668,13 +754,15 @@ list_csv(Tabela_Norte,"Indicador de Capacidade - Norte")
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Nordeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador = campo1
+                    Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/(campo1+campo2),2))
     Tabela_Nordeste['Estado'].append(estado)
 
 list_csv(Tabela_Nordeste,"Indicador de Capacidade - Nordeste")
@@ -683,13 +771,15 @@ list_csv(Tabela_Nordeste,"Indicador de Capacidade - Nordeste")
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Apuração_Sudeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Sudeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador =campo1
+                    Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/(campo1+campo2),2))
     Tabela_Sudeste['Estado'].append(estado)
 
 list_csv(Tabela_Sudeste,"Indicador de Capacidade - Sudeste")
@@ -698,46 +788,44 @@ list_csv(Tabela_Sudeste,"Indicador de Capacidade - Sudeste")
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']: 
-    for dados in Apuração_Centro_Oeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' or dados['campo'] == 'COMPETÊNCIA TRIBUTARIA MUNICIPAL (I)':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
-            elif dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
-                coluna_1 = dados['Receitas_realizadas_Bimestre'] 
-            elif dados['campo'] == 'COMPETÊNCIA TRIBUTARIA MUNICIPAL (I)':
-                coluna_2 = dados['Receitas_realizadas_Bimestre']
-                Tabela_Centro[str(dados['Ano'])].append(round(coluna_1/coluna_2,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador = campo1
+                    Tabela_Centro[str(dados['Ano'])].append(round(numerador/(campo1+campo2),2))
     Tabela_Centro['Estado'].append(estado)
 
 for estado in ['Distrito Federal']:
-    for dados in Apuração_Centro_Oeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
-                coluna_1 = dados['Receitas_realizadas_Bimestre'] 
-            if dados['campo'] == 'COMPETÊNCIA TRIBUTARIA MUNICIPAL (I)':
-                coluna_2 = dados['Receitas_realizadas_Bimestre']
-                Tabela_Centro[str(dados['Ano'])].append(round(coluna_1/coluna_2,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Centro_Oeste:
+            if dados['Estado'] == estado and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                    coluna_1 = dados['Receitas_realizadas_Bimestre'] 
+                if dados['campo'] == 'COMPETÊNCIA TRIBUTARIA MUNICIPAL (I)':
+                    coluna_2 = dados['Receitas_realizadas_Bimestre']
+                    Tabela_Centro[str(dados['Ano'])].append(round(coluna_1/coluna_2,2))
     Tabela_Centro['Estado'].append(estado)
 
 list_csv(Tabela_Centro,"Indicador de Capacidade_Centro")
-
-
 
 
 # 7.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-    for dados in Apuração_Sul:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Sul[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Sul:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador = campo1 
+                    Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/(campo1+campo2),2))
     Tabela_Sul['Estado'].append(estado)
 
 list_csv(Tabela_Sul,"Indicador de Capacidade - Sul")
@@ -745,44 +833,59 @@ list_csv(Tabela_Sul,"Indicador de Capacidade - Sul")
 # 7.6 Brasil 
 Tabela_Brasil = {'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 for anos in range(2013,2020):
-    Sudeste = {'numerador':[],'denominador':[]}
-    Sul = {'numerador':[],'denominador':[]}
-    Centro = {'numerador':[],'denominador':[]}
-    Norte = {'numerador':[],'denominador':[]}
-    Nordeste = {'numerador':[],'denominador':[]}
+    Sudeste = {'Total':[],'População':[]}
+    Sul = {'Total':[],'População':[]}
+    Centro = {'Total':[],'População':[]}
+    Norte = {'Total':[],'População':[]}
+    Nordeste = {'Total':[],'População':[]}
     for dados in list(dados_apuração.dicts()):
         for estado in ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Estado'] == estado and dados['Ano']==anos:
-                Norte['numerador'].append(dados['Receitas_realizadas_Bimestre'])
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Norte['denominador'].append(dados['Receitas_realizadas_Bimestre'])
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Norte['Total'].append(campo1/(campo1+campo2))
+                Norte['População'].append(int(dados['População']))
         for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)'  and dados['Estado'] == estado and dados['Ano']==anos:
-                Nordeste['numerador'].append(dados['Receitas_realizadas_Bimestre'])       
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Nordeste['denominador'].append(dados['Receitas_realizadas_Bimestre'])
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Nordeste['Total'].append(campo1/(campo1+campo2))
+                Nordeste['População'].append(int(dados['População']))
         for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-            if dados['campo'] =='RECEITA DE IMPOSTOS LÍQUIDA (I)'  and dados['Estado'] == estado and dados['Ano']==anos :
-                Sul['numerador'].append(dados['Receitas_realizadas_Bimestre'])     
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Sul['denominador'].append(dados['Receitas_realizadas_Bimestre'])
-        for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
-                if dados['Estado'] == estado and dados['Ano']==anos:
-                    Centro['numerador'].append(dados['Receitas_realizadas_Bimestre'])     
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' or dados['campo']=='COMPETÊNCIA TRIBUTARIA MUNICIPAL (I)':
-                if dados['Estado'] == estado and dados['Ano']==anos:
-                    Centro['denominador'].append(dados['Receitas_realizadas_Bimestre'])
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Sul['Total'].append(campo1/(campo1+campo2))
+                Sul['População'].append(int(dados['População']))
+        for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Centro['Total'].append(campo1/(campo1+campo2))
+                Centro['População'].append(int(dados['População']))
+        for estado in ['Distrito Federal']:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' and dados['Estado'] == estado:
+                campo_1 = dados['Receitas_realizadas_Bimestre'] 
+            elif dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS' and dados['Estado'] == estado:
+                campo_2 = dados['Receitas_realizadas_Bimestre'] 
+                Centro['Total'].append(campo1/(campo1+campo2))
+                Centro['População'].append(int(dados['População']))
         for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)'  and dados['Estado'] == estado and dados['Ano']==anos:
-                Sudeste['numerador'].append(dados['Receitas_realizadas_Bimestre'])     
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Sudeste['denominador'].append(dados['Receitas_realizadas_Bimestre'])
-    Tabela_Brasil[str(anos)].append(sum(Sudeste['numerador'])/sum(Sudeste['denominador']))
-    Tabela_Brasil[str(anos)].append(sum(Sul['numerador'])/sum(Sul['denominador']))
-    Tabela_Brasil[str(anos)].append(sum(Centro['numerador'])/sum(Sudeste['denominador']))
-    Tabela_Brasil[str(anos)].append(sum(Norte['numerador'])/sum(Norte['denominador']))
-    Tabela_Brasil[str(anos)].append(sum(Nordeste['numerador'])/sum(Nordeste['denominador']))
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Sudeste['Total'].append(campo1/(campo1+campo2))
+                Sudeste['População'].append(int(dados['População']))
+    Tabela_Brasil[str(anos)].append(sum(Sudeste['Total'])/sum(Sudeste['População']))
+    Tabela_Brasil[str(anos)].append(sum(Sul['Total'])/sum(Sul['População']))
+    Tabela_Brasil[str(anos)].append(sum(Centro['Total'])/sum(Sudeste['População']))
+    Tabela_Brasil[str(anos)].append(sum(Norte['Total'])/sum(Norte['População']))
+    Tabela_Brasil[str(anos)].append(sum(Nordeste['Total'])/sum(Nordeste['População']))
 Tabela_Brasil['Região'] = ['Sudeste','Sul','Centro','Norte','Nordeste']
 
 list_csv(Tabela_Brasil,"Indicador de Capacidade - Brasil")
@@ -793,13 +896,14 @@ list_csv(Tabela_Brasil,"Indicador de Capacidade - Brasil")
 Tabela_Norte = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-    for dados in Apuração_Norte:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        for dados in Apuração_Norte:
+           if dados['Estado'] == estado and dados['Ano']:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    Tabela_Norte[str(dados['Ano'])].append(round(campo2/(campo1+campo2),2))
     Tabela_Norte['Estado'].append(estado)
 
 list_csv(Tabela_Norte,"Indicador de Dependencia - Norte")
@@ -808,112 +912,153 @@ list_csv(Tabela_Norte,"Indicador de Dependencia - Norte")
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-    for dados in Apuração_Nordeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        numerador = []
+        denominador = []
+        for dados in Apuração_Nordeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo1)
+        Tabela_Nordeste[str(dados['Ano'])].append(round(campo2/(campo1+campo2),2))
     Tabela_Nordeste['Estado'].append(estado)
+
 list_csv(Tabela_Nordeste,"Indicador de Dependencia - Nordeste")
 
 # 8.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Apuração_Sudeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        numerador = []
+        denominador = []
+        for dados in Apuração_Sudeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo1)
+                    Tabela_Sudeste[str(dados['Ano'])].append(round(campo2/(campo1+campo2),2))
     Tabela_Sudeste['Estado'].append(estado)
+
 list_csv(Tabela_Sudeste,"Indicador de Dependencia - Sudeste")
 
-# 8.4 Centro Oeste 
+# 7.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-    for dados in Apuração_Centro_Oeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
+for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']: 
+    for anos in range(2013,2020):
+        numerador = []
+        denominador = []        
+        for dados in Apuração_Centro_Oeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo1)
+                    Tabela_Centro[str(dados['Ano'])].append(round(campo2/(campo1+campo2),2))
     Tabela_Centro['Estado'].append(estado)
 
 for estado in ['Distrito Federal']:
-    for dados in Apuração_Centro_Oeste:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
-                coluna_1 = dados['Receitas_realizadas_Bimestre'] 
-            if dados['campo'] == 'COMPETÊNCIA TRIBUTARIA MUNICIPAL (I)':
-                coluna_2 = dados['Receitas_realizadas_Bimestre']
-                Tabela_Centro[str(dados['Ano'])].append(round(coluna_1/coluna_2,2))
+    for anos in range(2013,2020):
+        numerador = []
+        denominador = []        
+        for dados in Apuração_Centro_Oeste:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                    coluna_1 = dados['Receitas_realizadas_Bimestre'] 
+                if dados['campo'] == 'COMPETÊNCIA TRIBUTARIA MUNICIPAL (I)':
+                    coluna_2 = dados['Receitas_realizadas_Bimestre']
+                    numerador.append(coluna_2)
+                    denominador.append(coluna_1+coluna_2)
+        Tabela_Centro[str(dados['Ano'])].append(round(coluna_2/coluna_2,2))
     Tabela_Centro['Estado'].append(estado)
 
-list_csv(Tabela_Centro,"Indicador de Dependencia - Centro Oeste")
+list_csv(Tabela_Centro,"Indicador de  Dependencia Centro")
 
-# 8.5 Sul 
+
+# 7.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-    for dados in Apuração_Sul:
-        if dados['Estado'] == estado:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)':
-                numerador = dados['Receitas_realizadas_Bimestre']
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Sul[str(dados['Ano'])].append(round(numerador/denominador,2))
+    for anos in range(2013,2020):
+        numerador = []
+        denominador = []        
+        for dados in Apuração_Sul:
+            if dados['Estado'] == estado:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano'] == anos :
+                    campo1 = dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano'] == anos:
+                    campo2 = dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo1)
+                    Tabela_Sudeste[str(dados['Ano'])].append(round(campo2/(campo1+campo2),2))
     Tabela_Sul['Estado'].append(estado)
 
-list_csv(Tabela_Sul,"Indicador de Dependencia - Sul")
+list_csv(Tabela_Sul,"Indicador de  Dependencia - Sul")
 
-# 8.6 Brasil 
+# 7.6 Brasil 
 Tabela_Brasil = {'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 for anos in range(2013,2020):
-    Sudeste = {'numerador':[],'denominador':[]}
-    Sul = {'numerador':[],'denominador':[]}
-    Centro = {'numerador':[],'denominador':[]}
-    Norte = {'numerador':[],'denominador':[]}
-    Nordeste = {'numerador':[],'denominador':[]}
+    Sudeste = {'Total':[],'População':[]}
+    Sul = {'Total':[],'População':[]}
+    Centro = {'Total':[],'População':[]}
+    Norte = {'Total':[],'População':[]}
+    Nordeste = {'Total':[],'População':[]}
     for dados in list(dados_apuração.dicts()):
         for estado in ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocantins']:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
-                Norte['numerador'].append(dados['Receitas_realizadas_Bimestre'])
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Norte['denominador'].append(dados['Receitas_realizadas_Bimestre'])
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Norte['Total'].append(campo2/(campo1+campo2))
+                Norte['População'].append(int(dados['População']))
         for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Paraíba','Pernambuco','Sergipe','Alagoas']:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
-                Nordeste['numerador'].append(dados['Receitas_realizadas_Bimestre'])       
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Nordeste['denominador'].append(dados['Receitas_realizadas_Bimestre'])
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Nordeste['Total'].append(campo2/(campo1+campo2))
+                Nordeste['População'].append(int(dados['População']))
         for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
-            if dados['campo'] =='RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  and dados['Estado'] == estado and dados['Ano']==anos :
-                Sul['numerador'].append(dados['Receitas_realizadas_Bimestre'])     
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Sul['denominador'].append(dados['Receitas_realizadas_Bimestre'])
-        for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
-                Centro['numerador'].append(dados['Receitas_realizadas_Bimestre'])     
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Centro['denominador'].append(dados['Receitas_realizadas_Bimestre'])
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Sul['Total'].append(campo2/(campo1+campo2))
+                Sul['População'].append(int(dados['População']))
+        for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Centro['Total'].append(campo2/(campo1+campo2))
+                Centro['População'].append(int(dados['População']))
+        for estado in ['Distrito Federal']:
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' and dados['Estado'] == estado:
+                campo_1 = dados['Receitas_realizadas_Bimestre'] 
+            elif dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS' and dados['Estado'] == estado:
+                campo_2 = dados['Receitas_realizadas_Bimestre'] 
+                Centro['Total'].append(campo2/(campo1+campo2))
+                Centro['População'].append(int(dados['População']))
         for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
-                Sudeste['numerador'].append(dados['Receitas_realizadas_Bimestre'])     
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Estado'] == estado and dados['Ano']==anos:
-                Sudeste['denominador'].append(dados['Receitas_realizadas_Bimestre'])
-    Tabela_Brasil[str(anos)].append(sum(Sudeste['numerador'])/sum(Sudeste['denominador']))
-    Tabela_Brasil[str(anos)].append(sum(Sul['numerador'])/sum(Sul['denominador']))
-    Tabela_Brasil[str(anos)].append(sum(Centro['numerador'])/sum(Sudeste['denominador']))
-    Tabela_Brasil[str(anos)].append(sum(Norte['numerador'])/sum(Norte['denominador']))
-    Tabela_Brasil[str(anos)].append(sum(Nordeste['numerador'])/sum(Nordeste['denominador']))
+            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and  dados['Estado'] == estado and dados['Ano']==anos:
+                campo1 = dados['Receitas_realizadas_Bimestre']
+            elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Estado'] == estado and dados['Ano']==anos:
+                campo2 = dados['Receitas_realizadas_Bimestre']
+                Sudeste['Total'].append(campo2/(campo1+campo2))
+                Sudeste['População'].append(int(dados['População']))
+    Tabela_Brasil[str(anos)].append(sum(Sudeste['Total'])/sum(Sudeste['População']))
+    Tabela_Brasil[str(anos)].append(sum(Sul['Total'])/sum(Sul['População']))
+    Tabela_Brasil[str(anos)].append(sum(Centro['Total'])/sum(Sudeste['População']))
+    Tabela_Brasil[str(anos)].append(sum(Norte['Total'])/sum(Norte['População']))
+    Tabela_Brasil[str(anos)].append(sum(Nordeste['Total'])/sum(Nordeste['População']))
 Tabela_Brasil['Região'] = ['Sudeste','Sul','Centro','Norte','Nordeste']
 
-list_csv(Tabela_Brasil,"Indicador de Dependencia - Brasil")
+list_csv(Tabela_Brasil,"Indicador de  Dependencia - Brasil")
 
 # 9.Indicador Dependencia Sus
 # 9.1 Norte
@@ -925,7 +1070,7 @@ for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocant
             if dados['campo'] == 'Provenientes da União':
                 numerador = dados['Receitas_realizadas_Bimestre']
             elif dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
+                denominador = dados['Receitas_realizadas_Bimestre']
                 Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Norte['Estado'].append(estado)
 
@@ -940,7 +1085,7 @@ for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Para
             if dados['campo'] == 'Provenientes da União':
                 numerador = dados['Receitas_realizadas_Bimestre']
             elif dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
+                denominador = dados['Receitas_realizadas_Bimestre']
                 Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Nordeste['Estado'].append(estado)
 
@@ -955,7 +1100,7 @@ for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
             if dados['campo'] == 'Provenientes da União':
                 numerador = dados['Receitas_realizadas_Bimestre']
             elif dados['campo'] ==  'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
+                denominador = dados['Receitas_realizadas_Bimestre']
                 Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sudeste['Estado'].append(estado)
 
@@ -970,8 +1115,11 @@ for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']:
             if dados['campo'] == 'Provenientes da União':
                 numerador = dados['Receitas_realizadas_Bimestre']
             elif dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
-                Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
+                denominador = dados['Receitas_realizadas_Bimestre']
+                try:
+                    Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
+                except:
+                    Tabela_Centro[str(dados['Ano'])].append(0.0000001)
     Tabela_Centro['Estado'].append(estado)
 
 
@@ -986,7 +1134,7 @@ for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
             if dados['campo'] == 'Provenientes da União':
                 numerador = dados['Receitas_realizadas_Bimestre']
             elif dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE':
-                denominador = int(dados['Receitas_realizadas_Bimestre'])
+                denominador = dados['Receitas_realizadas_Bimestre']
                 Tabela_Sul[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sul['Estado'].append(estado)
 
@@ -1073,11 +1221,9 @@ list_csv(Tabela_Sudeste,"Receitas Adicionais Totais - Sudeste")
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-    print(estado)
     for dados in Adicionais_Centro_Oeste:
         if dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE' and dados['Estado'] == estado:
             Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
-            print(dados['Receitas_realizadas_Bimestre'])
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
 list_csv(Tabela_Centro,"Receitas Adicionais Totais - Centro Oeste")
@@ -1147,7 +1293,6 @@ list_csv(Tabela_Sudeste,"Receitas Adicionais Totais per capita - Sudeste")
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for estado in ['Goiás','Distrito Federal','Mato Grosso','Mato Grosso do Sul']: 
-    print(estado)
     for dados in Adicionais_Centro_Oeste:
         if dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE' and dados['Estado'] == estado:
             numerador = dados['Receitas_realizadas_Bimestre']

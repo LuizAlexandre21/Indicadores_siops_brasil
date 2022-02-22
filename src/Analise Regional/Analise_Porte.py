@@ -1,7 +1,6 @@
 # Pacotes 
 from database import *
 import  numpy as np
-import plotly.express as px
 import logging
 import os
 import sys
@@ -49,20 +48,60 @@ except Exception as e:
    print(e)
 
 # Segregando os dados por Porte 
-# 1. Receita Total por Porte
+## 1. Receita Total por IDH - Milhoes
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for porte in  ['1000000','5000000','10000000','15000000','20000000']:
-    numerador = []
     for anos in range(2013,2020):
+        numerador =[]
+        denominador =[]
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Porte'] == porte and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-        Tabela[str(anos)].append(sum(numerador)/1000000)
+            if  dados['Porte'] == porte and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  or dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    denominador.append(dados['Receitas_realizadas_Bimestre'])
+        Tabela[str(anos)].append((sum(numerador)+sum(denominador))/1000000)
     Tabela['Porte'].append(porte)
 
 list_csv(Tabela,"Receita Total por Porte")
-# 2. Receita Total por Porte 
+
+# 2. Receita Total por IDH - Per Capita 
+Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
+
+for porte in  ['1000000','5000000','10000000','15000000','20000000']:
+    for anos in range(2013,2020):
+        numerador =[]
+        denominador =[]
+        pop = []
+        for dados in list(dados_apuração.dicts()):
+            if  dados['Porte'] == porte and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                    pop.append(int(dados['População']))
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)'  or dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    denominador.append(dados['Receitas_realizadas_Bimestre'])
+        Tabela[str(anos)].append(round((sum(numerador)+sum(denominador))/sum(pop),2))
+    Tabela['Porte'].append(porte)
+
+list_csv(Tabela,"Receita Total per capita por Porte")
+
+# 3. Receita Líquida - Milhões
+Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
+
+for porte in  ['1000000','5000000','10000000','15000000','20000000']:
+    numerador = []
+    for anos in range(2013,2020):
+        for dados in list(dados_apuração.dicts()):
+            if dados['Porte'] == porte and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA' :
+                    numerador.append(dados['Receitas_realizadas_Bimestre']/1000000)
+        Tabela[str(anos)].append(round(sum(numerador),2))
+    Tabela['Porte'].append(porte)
+
+list_csv(Tabela,"Receita Liquida por IDH")
+
+# 4. Receita Total por IDH - Per Capita 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for porte in  ['1000000','5000000','10000000','15000000','20000000']:
@@ -70,73 +109,56 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
     denominador =[]
     for anos in range(2013,2020):
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Porte'] == porte and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-                denominador.append(int(dados['População']))
+            if dados['Porte'] == porte and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                    denominador.append(int(dados['População']))
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receita Total por Porte per capita")
-# 3.Receita Líquida - Milhões
+list_csv(Tabela,"Receita Liquida por Porte")
+
+# 5.Receita de Transferências Constitucionais e Legais da União 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for porte in  ['1000000','5000000','10000000','15000000','20000000']:
-    numerador = []
     for anos in range(2013,2020):
+        numerador = []
+        denominador =[]
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Porte'] == porte and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-        Tabela[str(anos)].append(sum(numerador)/1000000)
-    Tabela['Porte'].append(porte)
+            if dados['Porte'] == porte and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                    denominador.append(int(dados['População']))
 
-list_csv(Tabela,"Receita Líquida por Porte")
-
-# 4. Receita Liquida - per capita 
-Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
-
-for porte in  ['1000000','5000000','10000000','15000000','20000000']:
-    numerador = []
-    denominador = []
-    for anos in range(2013,2020):
-        for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Porte'] == porte and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-                denominador.append(int(dados['População']))
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['Porte'].append(porte)
-
-list_csv(Tabela,"Receita Líquida per capita por Porte")
-
-# 5. Receita de Transferências Constitucionais e Legais da União 
-Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
-
-for porte in ['1000000','5000000','10000000','15000000','20000000']:
-    numerador = []
-    for anos in range(2013,2020):
-        for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Porte'] == porte and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-        Tabela[str(anos)].append(sum(numerador)/1000000)
-    Tabela['Porte'].append(porte)
-
 list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União por Porte")
 
-# 6. Receita de Transferências Constitucionais e Legais da União per capita
+# 6. Receita Total por IDH - Per Capita 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for porte in  ['1000000','5000000','10000000','15000000','20000000']:
-    numerador = []
-    denominador = []
     for anos in range(2013,2020):
+        numerador = []
+        denominador =[]
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Porte'] == porte and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-                denominador.append(int(dados['População']))
-        Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+            if dados['Porte'] == porte and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo']=='RECEITA DE IMPOSTOS LÍQUIDA': 
+                    campo1=dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo1)
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    campo2=dados['Receitas_realizadas_Bimestre']
+                    denominador.append(campo1+campo2)
+        try:
+            Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+        except Exception as e:
+            print(e)
     Tabela['Porte'].append(porte)
-list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União per capita por Porte ")
 
-# 7. Indicador de Capacidade 
+list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União per capita por porte")
+
+# 7.Indicador de Capacidade 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for porte in  ['1000000','5000000','10000000','15000000','20000000']:
@@ -144,31 +166,38 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
     denominador =[]
     for anos in range(2013,2020):
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' and dados['Porte'] == porte and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Porte'] == porte and dados['Ano']==anos:
-                denominador.append(dados['Receitas_realizadas_Bimestre'])
+            if dados['Porte'] == porte and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo']=='RECEITA DE IMPOSTOS LÍQUIDA': 
+                    campo1=dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo1)
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    campo2=dados['Receitas_realizadas_Bimestre']
+                    denominador.append(campo1+campo2)
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['Porte'].append(porte)
 
 list_csv(Tabela,"Indicador de Capacidade por Porte")
 
-# 8. Indicador de Dependência 
+# 8. Indicador de Depêndencia
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
 for porte in  ['1000000','5000000','10000000','15000000','20000000']:
-    numerador = []
-    denominador =[]
     for anos in range(2013,2020):
+        numerador = []
+        denominador =[]
         for dados in list(dados_apuração.dicts()):
-            if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' and dados['Porte'] == porte and dados['Ano']==anos:
-                numerador.append(dados['Receitas_realizadas_Bimestre'])
-            elif dados['campo'] == 'TOTAL DAS RECEITAS PARA APURAÇÃO DA APLICAÇÃO EM AÇÕES E SERVIÇOS PÚBLICOS DE SAÚDE (IV) = I + II - III' and dados['Porte'] == porte and dados['Ano']==anos:
-                denominador.append(dados['Receitas_realizadas_Bimestre'])
+            if dados['Porte'] == porte and dados['Ano']==anos:
+                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo']=='RECEITA DE IMPOSTOS LÍQUIDA': 
+                    campo1=dados['Receitas_realizadas_Bimestre']
+                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    campo2=dados['Receitas_realizadas_Bimestre']
+                    numerador.append(campo2)
+                    denominador.append(campo1+campo2)
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Indicador de Dependência por Porte")
+list_csv(Tabela,"Indicador de Dependencia por Porte")
+
 
 # 9. Indicador Dependencia Sus
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
