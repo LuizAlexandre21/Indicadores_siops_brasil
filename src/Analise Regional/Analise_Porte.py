@@ -99,7 +99,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
         Tabela[str(anos)].append(round(sum(numerador),2))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receita Liquida por IDH")
+list_csv(Tabela,"Receita Liquida por Porte")
 
 # 4. Receita Total por IDH - Per Capita 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -116,7 +116,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receita Liquida por Porte")
+list_csv(Tabela,"Receita Liquida por Porte - per capita")
 
 # 5.Receita de Transferências Constitucionais e Legais da União 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -129,9 +129,8 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
             if dados['Porte'] == porte and dados['Ano']==anos:
                 if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
                     numerador.append(dados['Receitas_realizadas_Bimestre'])
-                    denominador.append(int(dados['População']))
 
-        Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
+        Tabela[str(anos)].append(round(sum(numerador)/1000000))
     Tabela['Porte'].append(porte)
 list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União por Porte")
 
@@ -144,12 +143,9 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
         denominador =[]
         for dados in list(dados_apuração.dicts()):
             if dados['Porte'] == porte and dados['Ano']==anos:
-                if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo']=='RECEITA DE IMPOSTOS LÍQUIDA': 
-                    campo1=dados['Receitas_realizadas_Bimestre']
-                    numerador.append(campo1)
-                elif dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
-                    campo2=dados['Receitas_realizadas_Bimestre']
-                    denominador.append(campo1+campo2)
+                if dados['campo'] == 'RECEITA DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS (II)' or dados['campo'] == 'RECEITAS DE TRANSFERÊNCIAS CONSTITUCIONAIS E LEGAIS':
+                    numerador.append(dados['Receitas_realizadas_Bimestre'])
+                    denominador.append(int(dados['População']))
         try:
             Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
         except Exception as e:
