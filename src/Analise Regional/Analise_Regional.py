@@ -43,7 +43,7 @@ def list_csv(dic,to):
         
 # Importando os dados 
 try:
-   dados_apuração = (Populacao.select(Populacao.Estado,Populacao.Ano,Populacao.População,Populacao.IDH,Populacao.Estado,Receitas_apuracao_sps_estadual.campo,Receitas_apuracao_sps_estadual.Receitas_realizadas_Bimestre).distinct().join(Receitas_apuracao_sps_estadual, on=((Populacao.Estado == Receitas_apuracao_sps_estadual.estado) &(Populacao.Ano == Receitas_apuracao_sps_estadual.ano))))
+   dAdos_apuração = (Populacao.select(Populacao.Estado,Populacao.Ano,Populacao.População,Populacao.IDH,Populacao.Estado,Receitas_apuracao_sps_estadual.campo,Receitas_apuracao_sps_estadual.Receitas_realizadas_Bimestre).distinct().join(Receitas_apuracao_sps_estadual, on=((Populacao.Estado == Receitas_apuracao_sps_estadual.estado) &(Populacao.Ano == Receitas_apuracao_sps_estadual.ano))))
    dados_adicionais = (Populacao.select(Populacao.Estado,Populacao.Ano,Populacao.População,Populacao.IDH,Populacao.Estado,Receitas_adicionais_financiamento_estadual.campo,Receitas_adicionais_financiamento_estadual.Receitas_realizadas_Bimestre).distinct().join(Receitas_adicionais_financiamento_estadual, on=((Populacao.Estado == Receitas_adicionais_financiamento_estadual.estado) &(Populacao.Ano == Receitas_adicionais_financiamento_estadual.ano))))
 except Exception as e:
     print(e)
@@ -98,7 +98,7 @@ for dados in list(dados_apuração.dicts()):
 Adicionais_Sudeste = []
 for dados in list(dados_adicionais.dicts()):
     Sudeste = ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']
-    if dados.get("Estado") in Sul:
+    if dados.get("Estado") in Sudeste:
         Adicionais_Sudeste.append(dados)
 
 # Centro Oeste
@@ -1213,10 +1213,11 @@ list_csv(Tabela_Nordeste,"Receitas Adicionais Totais - Nordeste")
 # 10.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
-    for dados in Adicionais_Sudeste:
-        if dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE' and dados['Estado'] == estado:
-            Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
+for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:.
+    for anos in range(2013,2020):
+        for dados in Adicionais_Sudeste:
+            if dados['campo'] == 'TOTAL RECEITAS ADICIONAIS PARA FINANCIAMENTO DA SAÚDE' and dados['Estado'] == estado and dados['Ano']==anos:
+                Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sudeste['Estado'].append(estado)
 
 list_csv(Tabela_Sudeste,"Receitas Adicionais Totais - Sudeste")
