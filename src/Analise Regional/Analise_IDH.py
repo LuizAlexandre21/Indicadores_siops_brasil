@@ -51,7 +51,7 @@ except Exception as e:
 # 1. Receita Total por IDH - Milhoes,
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in  ['Muito Alto','Alto','Médio']:
+for idh in  ['Alto','Médio']:
     for anos in range(2013,2020):
         numerador =[]
         denominador =[]
@@ -64,18 +64,18 @@ for idh in  ['Muito Alto','Alto','Médio']:
         Tabela[str(anos)].append((sum(numerador)+sum(denominador))/1000000)
     Tabela['IDH'].append(idh)
 
-list_csv(Tabela,"Receita Total por IDH")
+list_csv(deflação(Tabela),"Receita Total por IDH")
 
 # 2. Receita Total por IDH - Per Capita 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in  ['Muito Alto','Alto','Médio']:
+for idh in  ['Alto','Médio']:
     for anos in range(2013,2020):
         numerador =[]
         denominador =[]
         pop = []
         for dados in list(dados_apuração.dicts()):
-            if  dados['IDH'] == idh and dados['Ano']==anos:
+            if dados['IDH'] == idh and dados['Ano']==anos:
                 if dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA (I)' or dados['campo'] == 'RECEITA DE IMPOSTOS LÍQUIDA':
                     numerador.append(dados['Receitas_realizadas_Bimestre'])
                     pop.append(int(dados['População']))
@@ -85,12 +85,12 @@ for idh in  ['Muito Alto','Alto','Médio']:
     Tabela['IDH'].append(idh)
 
 
-list_csv(Tabela,"Receita Total per capita por IDH")
+list_csv(deflação(Tabela),"Receita Total per capita por IDH")
 
 # 3. Receita Líquida - Milhões
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in ['Muito Alto','Alto','Médio']:
+for idh in ['Alto','Médio']:
     numerador = []
     for anos in range(2013,2020):
         for dados in list(dados_apuração.dicts()):
@@ -100,12 +100,12 @@ for idh in ['Muito Alto','Alto','Médio']:
         Tabela[str(anos)].append(round(sum(numerador),2))
     Tabela['IDH'].append(idh)
 
-list_csv(Tabela,"Receita Liquida por IDH")
+list_csv(deflação(Tabela),"Receita Liquida por IDH")
 
 # 4. Receita Total por IDH - Per Capita 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in ['Muito Alto','Alto','Médio']:
+for idh in ['Alto','Médio']:
     numerador = []
     denominador =[]
     for anos in range(2013,2020):
@@ -117,12 +117,12 @@ for idh in ['Muito Alto','Alto','Médio']:
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['IDH'].append(idh)
 
-list_csv(Tabela,"Receita Liquida per capita por IDH")
+list_csv(deflação(Tabela),"Receita Liquida per capita por IDH")
 
 # 5.Receita de Transferências Constitucionais e Legais da União 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in  ['Muito Alto','Alto','Médio']:
+for idh in  ['Alto','Médio']:
     numerador = []
     for anos in range(2013,2020):
         for dados in list(dados_apuração.dicts()):
@@ -132,12 +132,12 @@ for idh in  ['Muito Alto','Alto','Médio']:
         Tabela[str(anos)].append(sum(numerador))
     Tabela['IDH'].append(idh)
 
-list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União por IDH")
+list_csv(deflação(Tabela),"Receita de Transferências Constitucionais e Legais da União por IDH")
 
 # 6. Receita Total por IDH - Per Capita 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in ['Muito Alto','Alto','Médio']:
+for idh in ['Alto','Médio']:
     for anos in range(2013,2020):
         numerador = []
         denominador =[]
@@ -150,12 +150,12 @@ for idh in ['Muito Alto','Alto','Médio']:
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['IDH'].append(idh)
 
-list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União per capita por IDH")
+list_csv(deflação(Tabela),"Receita de Transferências Constitucionais e Legais da União per capita por IDH")
 
 # 7.Indicador de Capacidade 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in ['Muito Alto','Alto','Médio']:
+for idh in ['Alto','Médio']:
     for anos in range(2013,2020):
         numerador = []
         denominador =[]
@@ -178,7 +178,7 @@ list_csv(Tabela,"Indicador de Capacidade por IDH")
 # 8. Indicador de Depêndencia
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in ['Muito Alto','Alto','Médio']:
+for idh in ['Alto','Médio']:
     for anos in range(2013,2020):
         numerador = []
         denominador =[]
@@ -198,7 +198,7 @@ list_csv(Tabela,"Indicador de Dependencia por IDH")
 # 9. Indicador Dependencia Sus
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in ['Muito Alto','Alto','Médio']:
+for idh in ['Alto','Médio']:
     for anos in range(2013,2020):
         numerador = []
         denominador =[]
@@ -218,7 +218,7 @@ list_csv(Tabela,"Indicador de Dependencia Sus por IDH")
 # 10. Receitas Adicionais Totais 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in  ['Muito Alto','Alto','Médio']:
+for idh in  ['Alto','Médio']:
     numerador = []
     for anos in range(2013,2020):
         for dados in list(dados_adicionais.dicts()):
@@ -227,11 +227,11 @@ for idh in  ['Muito Alto','Alto','Médio']:
         Tabela[str(anos)].append(sum(numerador))
     Tabela['IDH'].append(idh)
 
-list_csv(Tabela," Receitas Adicionais Totais  por IDH")
+list_csv(deflação(Tabela)," Receitas Adicionais Totais  por IDH")
 # 11. Receitas Adicionais per capita 
 Tabela = {'IDH':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
-for idh in ['Muito Alto','Alto','Médio']:
+for idh in ['Alto','Médio']:
     numerador = []
     denominador =[]
     for anos in range(2013,2020):
@@ -242,4 +242,4 @@ for idh in ['Muito Alto','Alto','Médio']:
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['IDH'].append(idh)
 
-list_csv(Tabela," Receitas Adicionais per capita por IDH")
+list_csv(deflação(Tabela)," Receitas Adicionais per capita por IDH")

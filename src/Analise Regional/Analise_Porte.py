@@ -64,7 +64,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
         Tabela[str(anos)].append((sum(numerador)+sum(denominador))/1000000)
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receita Total por Porte")
+list_csv(deflação(Tabela),"Receita Total por Porte")
 
 # 2. Receita Total por IDH - Per Capita 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -84,7 +84,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
         Tabela[str(anos)].append(round((sum(numerador)+sum(denominador))/sum(pop),2))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receita Total per capita por Porte")
+list_csv(deflação(Tabela),"Receita Total per capita por Porte")
 
 # 3. Receita Líquida - Milhões
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -99,7 +99,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
         Tabela[str(anos)].append(round(sum(numerador),2))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receita Liquida por Porte")
+list_csv(deflação(Tabela),"Receita Liquida por Porte")
 
 # 4. Receita Total por IDH - Per Capita 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -116,7 +116,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receita Liquida por Porte - per capita")
+list_csv(deflação(Tabela),"Receita Liquida por Porte - per capita")
 
 # 5.Receita de Transferências Constitucionais e Legais da União 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -132,7 +132,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
 
         Tabela[str(anos)].append(round(sum(numerador)/1000000))
     Tabela['Porte'].append(porte)
-list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União por Porte")
+list_csv(deflação(Tabela),"Receita de Transferências Constitucionais e Legais da União por Porte")
 
 # 6. Receita Total por IDH - Per Capita 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -152,7 +152,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
             print(e)
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receita de Transferências Constitucionais e Legais da União per capita por porte")
+list_csv(deflação(Tabela),"Receita de Transferências Constitucionais e Legais da União per capita por porte")
 
 # 7.Indicador de Capacidade 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -224,7 +224,7 @@ for porte in  ['1000000','5000000','10000000','15000000','20000000']:
         Tabela[str(anos)].append(sum(numerador))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receitas Adicionais Totais por Porte")
+list_csv(deflação(Tabela),"Receitas Adicionais Totais por Porte")
 
 # 11. Receitas Adicionais per capita 
 Tabela = {'Porte':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -240,4 +240,4 @@ for porte in ['1000000','5000000','10000000','15000000','20000000']:
         Tabela[str(anos)].append(round(sum(numerador)/sum(denominador),2))
     Tabela['Porte'].append(porte)
 
-list_csv(Tabela,"Receitas Adicionais per capita por Porte")
+list_csv(deflação(Tabela),"Receitas Adicionais per capita por Porte")

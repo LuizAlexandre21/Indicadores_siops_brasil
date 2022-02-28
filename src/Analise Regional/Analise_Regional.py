@@ -217,7 +217,7 @@ for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocant
         Tabela_Norte[str(anos)].append(round((campo1 + campo2)/campo3,2))
     Tabela_Norte['Estado'].append(estado)
 
-list_csv(Tabela_Norte,"Receita Total por Região per capita - Norte")
+list_csv(deflação(Tabela_Norte),"Receita Total por Região per capita - Norte")
 
 # 2.2 Nordeste 
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -233,7 +233,7 @@ for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Para
         Tabela_Nordeste[str(anos)].append(round((campo1 + campo2)/campo3,2))
     Tabela_Nordeste['Estado'].append(estado)
 
-list_csv(Tabela_Nordeste,"Receita Total por Região per capita - Nordeste")
+list_csv(deflação(Tabela_Nordeste),"Receita Total por Região per capita - Nordeste")
 
 # 2.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -249,7 +249,7 @@ for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
         Tabela_Sudeste[str(anos)].append(round((campo1 + campo2)/campo3,2))
     Tabela_Sudeste['Estado'].append(estado)
 
-list_csv(Tabela_Sudeste,"Receita Total por Região per capita - Sudeste")
+list_csv(deflação(Tabela_Sudeste),"Receita Total por Região per capita - Sudeste")
 
 # 2.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -265,7 +265,7 @@ for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
         Tabela_Centro[str(anos)].append(round((campo1 + campo2)/campo3,2))
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
         
-list_csv(Tabela_Centro,"Receita Total por Região per capita - Centro Oeste")
+list_csv(deflação(Tabela_Centro),"Receita Total por Região per capita - Centro Oeste")
 
 # 2.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -281,7 +281,7 @@ for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
         Tabela_Sul[str(anos)].append(round((campo1 + campo2)/campo3,2))
     Tabela_Sul['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
-list_csv(Tabela_Sul,"Receita Total por Região per capita - Sul")
+list_csv(deflação(Tabela_Sul),"Receita Total por Região per capita - Sul")
 
 # 2.6 Brasil 
 Tabela_Brasil = {'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -334,7 +334,7 @@ for anos in range(2013,2020):
     Tabela_Brasil[str(anos)].append(sum(Nordeste['Total'])/sum(Nordeste['População']))
 Tabela_Brasil['Região'] = ['Sudeste','Sul','Centro','Norte','Nordeste']
 
-list_csv(Tabela_Brasil,"Receita Total por Região per capita - Brasil")
+list_csv(deflação(Tabela_Brasil),"Receita Total por Região per capita - Brasil")
 
 # 3. Receita Líquida - Milhões
 # 3.1 Norte 
@@ -347,7 +347,7 @@ for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocant
                 Tabela_Norte[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Norte['Estado'].append(estado)
 
-list_csv(Tabela_Norte,"Receita Líquida - Norte")
+list_csv(deflação(Tabela_Norte),"Receita Líquida - Norte")
 
 # 3.2 Nordeste 
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -359,7 +359,8 @@ for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Para
                 Tabela_Nordeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Nordeste['Estado'].append(estado)
 
-list_csv(Tabela_Nordeste,"Receita Líquida - Nordeste")
+list_csv(deflação(Tabela_Nordeste),"Receita Líquida - Nordeste")
+
 # 3.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
 
@@ -370,7 +371,7 @@ for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
                 Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sudeste['Estado'].append(estado)
 
-list_csv(Tabela_Sudeste,"Receita Líquida - Sudeste")
+list_csv(deflação(Tabela_Sudeste),"Receita Líquida - Sudeste")
 
 # 3.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -383,7 +384,7 @@ for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
                     Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
-list_csv(Tabela_Centro,"Receita Líquida - Centro Oeste")
+list_csv(deflação(Tabela_Centro),"Receita Líquida - Centro Oeste")
 
 # 3.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -395,7 +396,7 @@ for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
                 Tabela_Sul[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sul['Estado'].append(estado)
 
-list_csv(Tabela_Sul,"Receita Líquida - Sul")
+list_csv(deflação(Tabela_Sul),"Receita Líquida - Sul")
 
 # 3.6 Brasil 
 Regiões = {'Sul':Tabela_Sul,'Sudeste':Tabela_Sudeste,'Nordeste':Tabela_Nordeste,'Norte':Tabela_Norte,'Centro Oeste':Tabela_Centro}
@@ -405,7 +406,7 @@ for região in Regiões.keys():
         Tabela_Brasil[str(ano)].append(sum(Regiões[região][str(ano)]))
     Tabela_Brasil['Região'].append(região)
     
-list_csv(Tabela_Brasil,"Receita Líquida - Brasil")
+list_csv(deflação(Tabela_Brasil),"Receita Líquida - Brasil")
 
 # 4. Receita Líquida - per capita
 # 4.1 Norte
@@ -420,7 +421,7 @@ for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocant
                 Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Norte['Estado'].append(estado)
 
-list_csv(Tabela_Norte,"Receita Líquida per capita - Norte")
+list_csv(deflação(Tabela_Norte),"Receita Líquida per capita - Norte")
 
 # 4.2 Nordeste 
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -434,7 +435,7 @@ for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Para
                 Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Nordeste['Estado'].append(estado)
 
-list_csv(Tabela_Nordeste,"Receita Líquida per capita - Nordeste")
+list_csv(deflação(Tabela_Nordeste),"Receita Líquida per capita - Nordeste")
 
 # 4.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -447,7 +448,7 @@ for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
                 denominador = int(dados['População'])
                 Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sudeste['Estado'].append(estado)
-list_csv(Tabela_Sudeste,"Receita Líquida per capita - Sudeste")
+list_csv(deflação(Tabela_Sudeste),"Receita Líquida per capita - Sudeste")
 
 # 4.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -462,7 +463,7 @@ for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
                     Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
-list_csv(Tabela_Centro,"Receita Líquida per capita - Centro Oeste")
+list_csv(deflação(Tabela_Centro),"Receita Líquida per capita - Centro Oeste")
 
 # 4.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -476,7 +477,7 @@ for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
                 Tabela_Sul[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sul['Estado'].append(estado)
 
-list_csv(Tabela_Sul,"Receita Líquida per capita - Sul")
+list_csv(deflação(Tabela_Sul),"Receita Líquida per capita - Sul")
 
 # 4.6 Brasil 
 Tabela_Brasil = {'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -511,7 +512,7 @@ for anos in range(2013,2020):
     Tabela_Brasil[str(anos)].append(sum(Nordeste['Total'])/sum(Nordeste['População']))
 Tabela_Brasil['Região'] = ['Sudeste','Sul','Centro','Norte','Nordeste']
 
-list_csv(Tabela_Brasil,"Receita Líquida per capita - Brasil")
+list_csv(deflação(Tabela_Brasil),"Receita Líquida per capita - Brasil")
 
 # 5.Receita de Transferências Constitucionais e Legais da União - Milhões 
 # 5.1 Norte 
@@ -524,7 +525,7 @@ for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocant
                 Tabela_Norte[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Norte['Estado'].append(estado)
 
-list_csv(Tabela_Norte,"Receita de Transferências Constitucionais e Legais da União - Norte")
+list_csv(deflação(Tabela_Norte),"Receita de Transferências Constitucionais e Legais da União - Norte")
 
 # 5.2 Nordeste 
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -536,7 +537,7 @@ for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Para
                 Tabela_Nordeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Nordeste['Estado'].append(estado)
 
-list_csv(Tabela_Nordeste,"Receita de Transferências Constitucionais e Legais da União - Nordeste")
+list_csv(deflação(Tabela_Nordeste),"Receita de Transferências Constitucionais e Legais da União - Nordeste")
 
 # 5.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -548,7 +549,7 @@ for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
                 Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sudeste['Estado'].append(estado)
 
-list_csv(Tabela_Sudeste,"Receita de Transferências Constitucionais e Legais da União - Sudeste")
+list_csv(deflação(Tabela_Sudeste),"Receita de Transferências Constitucionais e Legais da União - Sudeste")
 
 # 5.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -560,7 +561,7 @@ for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
                 if dados['Estado'] == estado and dados['Ano'] == anos:
                     Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
-list_csv(Tabela_Centro,"Receita de Transferências Constitucionais e Legais da União - Centro")
+list_csv(deflação(Tabela_Centro),"Receita de Transferências Constitucionais e Legais da União - Centro")
 
 # 5.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -572,7 +573,7 @@ for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
                 Tabela_Sul[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sul['Estado'].append(estado)
 
-list_csv(Tabela_Sul,"Receita de Transferências Constitucionais e Legais da União - Sul")
+list_csv(deflação(Tabela_Sul),"Receita de Transferências Constitucionais e Legais da União - Sul")
 
 # 5.6 Brasil 
 Regiões = {'Sul':Tabela_Sul,'Sudeste':Tabela_Sudeste,'Nordeste':Tabela_Nordeste,'Norte':Tabela_Norte,'Centro Oeste':Tabela_Centro}
@@ -584,7 +585,7 @@ for região in Regiões.keys():
         Tabela_Brasil[str(ano)].append(sum(Regiões[região][str(ano)]))
     Tabela_Brasil['Região'].append(região)
     
-list_csv(Tabela_Brasil,"Receita de Transferências Constitucionais e Legais da União - Brasil")
+list_csv(deflação(Tabela_Brasil),"Receita de Transferências Constitucionais e Legais da União - Brasil")
 
 # 6 Receita de Transferências Constitucionais e Legais da União - Per Capita
 # 6.1 Norte
@@ -599,7 +600,7 @@ for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocant
                 Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Norte['Estado'].append(estado)
 
-list_csv(Tabela_Norte,"Receita de Transferências Constitucionais e Legais da União per capita - Sul")
+list_csv(deflação(Tabela_Norte),"Receita de Transferências Constitucionais e Legais da União per capita - Sul")
 
 
 # 6.2 Nordeste 
@@ -614,7 +615,7 @@ for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Para
                 Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Nordeste['Estado'].append(estado)
 
-list_csv(Tabela_Nordeste,"Receita de Transferências Constitucionais e Legais da União per capita - Nordeste")
+list_csv(deflação(Tabela_Nordeste),"Receita de Transferências Constitucionais e Legais da União per capita - Nordeste")
 
 # 6.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -628,7 +629,7 @@ for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
                 Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sudeste['Estado'].append(estado)
 
-list_csv(Tabela_Sudeste,"Receita de Transferências Constitucionais e Legais da União per capita - Sudeste")
+list_csv(deflação(Tabela_Sudeste),"Receita de Transferências Constitucionais e Legais da União per capita - Sudeste")
 
 # 6.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -643,7 +644,7 @@ for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
                     Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
-list_csv(Tabela_Centro,"Receita de Transferências Constitucionais e Legais da União per capita - Centro Oeste")
+list_csv(deflação(Tabela_Centro),"Receita de Transferências Constitucionais e Legais da União per capita - Centro Oeste")
 
 # 6.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -657,7 +658,7 @@ for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
             Tabela_Sul[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sul['Estado'].append(estado)
 
-list_csv(Tabela_Sul,"Receita de Transferências Constitucionais e Legais da União per capita - Sul")
+list_csv(deflação(Tabela_Sul),"Receita de Transferências Constitucionais e Legais da União per capita - Sul")
 
 # 6.6 Brasil 
 Tabela_Brasil = {'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -696,7 +697,7 @@ for anos in range(2013,2020):
     Tabela_Brasil[str(anos)].append(sum(Nordeste['Total'])/sum(Nordeste['População']))
 Tabela_Brasil['Região'] = ['Sudeste','Sul','Centro','Norte','Nordeste']
 
-list_csv(Tabela_Brasil,"Receita de Transferências Constitucionais e Legais da União per capita - Brasil")
+list_csv(deflação(Tabela_Brasil),"Receita de Transferências Constitucionais e Legais da União per capita - Brasil")
 
 # 7 Indicador de Capacidade 
 # 7.1 Norte 
@@ -1124,7 +1125,7 @@ for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocant
             Tabela_Norte[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Norte['Estado'].append(estado)
 
-list_csv(Tabela_Norte,"Receitas Adicionais Totais - Norte")
+list_csv(deflação(Tabela_Norte),"Receitas Adicionais Totais - Norte")
 
 # 10.2 Nordeste 
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1135,7 +1136,7 @@ for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Para
             Tabela_Nordeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Nordeste['Estado'].append(estado)
 
-list_csv(Tabela_Nordeste,"Receitas Adicionais Totais - Nordeste")
+list_csv(deflação(Tabela_Nordeste),"Receitas Adicionais Totais - Nordeste")
 
 # 10.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1147,7 +1148,7 @@ for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
                 Tabela_Sudeste[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sudeste['Estado'].append(estado)
 
-list_csv(Tabela_Sudeste,"Receitas Adicionais Totais - Sudeste")
+list_csv(deflação(Tabela_Sudeste),"Receitas Adicionais Totais - Sudeste")
 
 # 10.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1158,7 +1159,7 @@ for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
             Tabela_Centro[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
-list_csv(Tabela_Centro,"Receitas Adicionais Totais - Centro Oeste")
+list_csv(deflação(Tabela_Centro),"Receitas Adicionais Totais - Centro Oeste")
 
 # 10.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1169,7 +1170,7 @@ for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
             Tabela_Sul[str(dados['Ano'])].append(dados['Receitas_realizadas_Bimestre']/1000000)
     Tabela_Sul['Estado'].append(estado)
 
-list_csv(Tabela_Sul,"Receitas Adicionais Totais - Sul")
+list_csv(deflação(Tabela_Sul),"Receitas Adicionais Totais - Sul")
 
 # 10.6 Brasil 
 Regiões = {'Sul':Tabela_Sul,'Sudeste':Tabela_Sudeste,'Nordeste':Tabela_Nordeste,'Norte':Tabela_Norte,'Centro Oeste':Tabela_Centro}
@@ -1179,7 +1180,7 @@ for região in Regiões.keys():
     for ano in range(2013,2020):
         Tabela_Brasil[str(ano)].append(sum(Regiões[região][str(ano)]))
     Tabela_Brasil['Região'].append(região)
-list_csv(Tabela_Brasil,"Receitas Adicionais Totais - Brasil")
+list_csv(deflação(Tabela_Brasil),"Receitas Adicionais Totais - Brasil")
 
 # 11. Receitas Adicionais per capita 
 # 11.1 Norte 
@@ -1193,7 +1194,7 @@ for estado in  ['Acre','Amapá','Amazonas','Roraima','Rondônia','Pará','Tocant
             Tabela_Norte[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Norte['Estado'].append(estado)
 
-list_csv(Tabela_Norte,"Receitas Adicionais Totais per capita - Norte")
+list_csv(deflação(Tabela_Norte),"Receitas Adicionais Totais per capita - Norte")
 
 # 11.2 Nordeste 
 Tabela_Nordeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1206,7 +1207,7 @@ for estado in ['Bahia','Ceará','Piauí','Maranhão','Rio Grande do Norte','Para
             Tabela_Nordeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Nordeste['Estado'].append(estado)
 
-list_csv(Tabela_Nordeste,"Receitas Adicionais Totais per capita - Nordeste")
+list_csv(deflação(Tabela_Nordeste),"Receitas Adicionais Totais per capita - Nordeste")
 
 # 11.3 Sudeste 
 Tabela_Sudeste = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1219,7 +1220,7 @@ for estado in ['Rio de Janeiro','Minas Gerais','São Paulo','Espírito Santo']:
             Tabela_Sudeste[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sudeste['Estado'].append(estado)
 
-list_csv(Tabela_Sudeste,"Receitas Adicionais Totais per capita - Sudeste")
+list_csv(deflação(Tabela_Sudeste),"Receitas Adicionais Totais per capita - Sudeste")
 
 # 11.4 Centro Oeste 
 Tabela_Centro = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1232,7 +1233,7 @@ for estado in ['Goiás','Mato Grosso','Mato Grosso do Sul']:
             Tabela_Centro[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Centro['Estado'].append(estado)  # TODO: Corrigir esse detalhe
 
-list_csv(Tabela_Centro,"Receitas Adicionais Totais per capita - Centro Oeste")
+list_csv(deflação(Tabela_Centro),"Receitas Adicionais Totais per capita - Centro Oeste")
 
 # 11.5 Sul 
 Tabela_Sul = {'Estado':[],'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1245,7 +1246,7 @@ for estado in ['Rio Grande do Sul','Paraná','Santa Catarina']:
             Tabela_Sul[str(dados['Ano'])].append(round(numerador/denominador,2))
     Tabela_Sul['Estado'].append(estado)
 
-list_csv(Tabela_Sul,"Receitas Adicionais Totais per capita - Sul")
+list_csv(deflação(Tabela_Sul),"Receitas Adicionais Totais per capita - Sul")
 
 # 11.6 Brasil 
 Tabela_Brasil = {'2013':[],'2014':[],'2015':[],'2016':[],'2017':[],'2018':[],'2019':[]}
@@ -1283,4 +1284,4 @@ for anos in range(2013,2020):
     Tabela_Brasil[str(anos)].append(sum(Nordeste['Total'])/sum(Nordeste['População']))
 Tabela_Brasil['Região'] = ['Sudeste','Sul','Centro','Norte','Nordeste']
 
-list_csv(Tabela_Brasil,"Receitas Adicionais Totais per capita - Brasil")
+list_csv(deflação(Tabela_Brasil),"Receitas Adicionais Totais per capita - Brasil")
