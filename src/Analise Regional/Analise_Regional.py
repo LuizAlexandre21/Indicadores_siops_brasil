@@ -21,11 +21,11 @@ def deflação(serie):
         if ano not in ['Estado','IDH','Estado','Região']:
             lista = []  
             for series in serie[ano]:
-                lista.append(series*inflação[ano])
+                lista.append(series*(inflação['2019']/inflação[ano]))
             deflation[ano]= lista
         else:
             deflation[ano]= serie[ano]
-    return deflation
+    return(deflation)
 
 # Exportando os dados para csv 
 def list_csv(dic,to):
